@@ -1,0 +1,345 @@
+{% extends 'firstapp/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-card {
+        border-radius: 16px;
+        padding: 24px;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 32px rgba(0,0,0,0.15);
+    }
+    .stat-card .icon-bg {
+        position: absolute;
+        right: -10px;
+        top: -10px;
+        font-size: 80px;
+        opacity: 0.15;
+    }
+    .stat-card .stat-number {
+        font-size: 42px;
+        font-weight: 700;
+        line-height: 1;
+    }
+    .stat-card .stat-label {
+        font-size: 14px;
+        opacity: 0.9;
+        margin-top: 6px;
+    }
+    .stat-card .stat-link {
+        font-size: 12px;
+        color: rgba(255,255,255,0.8);
+        text-decoration: none;
+        margin-top: 12px;
+        display: inline-block;
+    }
+    .stat-card .stat-link:hover {
+        color: #fff;
+    }
+
+    .card-blue   { background: linear-gradient(135deg, #1a73e8, #0d47a1); }
+    .card-green  { background: linear-gradient(135deg, #2ecc71, #1a7a44); }
+    .card-pink   { background: linear-gradient(135deg, #e91e8c, #880e4f); }
+    .card-orange { background: linear-gradient(135deg, #ff6f00, #e65100); }
+
+    .section-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .recent-table thead {
+        background: linear-gradient(135deg, #2c3e50, #34495e);
+        color: #fff;
+    }
+    .recent-table tbody tr {
+        transition: background 0.15s;
+    }
+    .recent-table tbody tr:hover {
+        background: #f0f7ff;
+    }
+
+    .avatar-circle {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 14px;
+        color: #fff;
+        flex-shrink: 0;
+    }
+
+    .gender-badge {
+        font-size: 11px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .welcome-banner {
+        background: linear-gradient(135deg, #2c3e50, #3498db);
+        border-radius: 16px;
+        padding: 28px 32px;
+        color: #fff;
+        margin-bottom: 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .welcome-banner h3 {
+        font-size: 22px;
+        font-weight: 700;
+        margin: 0 0 6px;
+    }
+    .welcome-banner p {
+        margin: 0;
+        opacity: 0.85;
+        font-size: 14px;
+    }
+    .welcome-banner .btn-light {
+        background: rgba(255,255,255,0.2);
+        border: 1px solid rgba(255,255,255,0.4);
+        color: #fff;
+        border-radius: 8px;
+        padding: 8px 20px;
+        font-size: 14px;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+    .welcome-banner .btn-light:hover {
+        background: rgba(255,255,255,0.35);
+    }
+
+    .quick-action {
+        border-radius: 12px;
+        padding: 18px;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+        border: 2px solid #e9ecef;
+        transition: all 0.2s;
+        color: #2c3e50;
+    }
+    .quick-action:hover {
+        border-color: #3498db;
+        background: #f0f7ff;
+        color: #1a73e8;
+        transform: translateY(-3px);
+    }
+    .quick-action i {
+        font-size: 28px;
+        display: block;
+        margin-bottom: 8px;
+    }
+    .quick-action span {
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #adb5bd;
+    }
+    .empty-state i {
+        font-size: 52px;
+        display: block;
+        margin-bottom: 12px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Welcome Banner -->
+<div class="welcome-banner">
+    <div>
+        <h3>👋 Welcome back, {{ request.user.username|title }}!</h3>
+        <p>Here's what's happening in your Student Management System today.</p>
+    </div>
+    <a href="{% url 'student_add' %}" class="btn-light">
+        <i class="bi bi-person-plus"></i> Add Student
+    </a>
+</div>
+
+<!-- Stats Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6">
+        <div class="stat-card card-blue">
+            <i class="bi bi-people-fill icon-bg"></i>
+            <div class="stat-number">{{ total_students }}</div>
+            <div class="stat-label">Total Students</div>
+            <a href="{% url 'student_list' %}" class="stat-link">
+                View all <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="stat-card card-green">
+            <i class="bi bi-person-fill icon-bg"></i>
+            <div class="stat-number">{{ male_count }}</div>
+            <div class="stat-label">Male Students</div>
+            <a href="{% url 'student_list' %}" class="stat-link">
+                View all <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="stat-card card-pink">
+            <i class="bi bi-person-fill icon-bg"></i>
+            <div class="stat-number">{{ female_count }}</div>
+            <div class="stat-label">Female Students</div>
+            <a href="{% url 'student_list' %}" class="stat-link">
+                View all <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="stat-card card-orange">
+            <i class="bi bi-person-plus-fill icon-bg"></i>
+            <div class="stat-number">{{ recent_students|length }}</div>
+            <div class="stat-label">Recent Enrollments</div>
+            <a href="{% url 'student_add' %}" class="stat-link">
+                Add new <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="section-title">
+    <i class="bi bi-lightning-fill text-warning"></i> Quick Actions
+</div>
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <a href="{% url 'student_add' %}" class="quick-action">
+            <i class="bi bi-person-plus text-primary"></i>
+            <span>Add Student</span>
+        </a>
+    </div>
+    <div class="col-md-3 col-6">
+        <a href="{% url 'student_list' %}" class="quick-action">
+            <i class="bi bi-people text-success"></i>
+            <span>View Students</span>
+        </a>
+    </div>
+    <div class="col-md-3 col-6">
+        <a href="{% url 'export_csv' %}" class="quick-action">
+            <i class="bi bi-file-earmark-excel text-success"></i>
+            <span>Export CSV</span>
+        </a>
+    </div>
+    <div class="col-md-3 col-6">
+        <a href="{% url 'change_password' %}" class="quick-action">
+            <i class="bi bi-shield-lock text-warning"></i>
+            <span>Change Password</span>
+        </a>
+    </div>
+</div>
+
+<!-- Recent Students Table -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="section-title mb-0">
+        <i class="bi bi-clock-history text-primary"></i> Recent Enrollments
+    </div>
+    <a href="{% url 'student_list' %}" class="btn btn-sm btn-outline-primary">
+        View All <i class="bi bi-arrow-right"></i>
+    </a>
+</div>
+
+{% if recent_students %}
+<div class="table-responsive">
+    <table class="table recent-table align-middle rounded-3 overflow-hidden">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Student</th>
+                <th>Student ID</th>
+                <th>Email</th>
+                <th>Gender</th>
+                <th>Enrolled</th>
+                <th class="text-center">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in recent_students %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        {% if student.photo %}
+                            <img src="{{ student.photo.url }}"
+                                 style="width:38px; height:38px; border-radius:50%; object-fit:cover;">
+                        {% else %}
+                            {% if forloop.counter == 1 %}
+                                <div class="avatar-circle" style="background:#3498db;">{{ student.name|first|upper }}</div>
+                            {% elif forloop.counter == 2 %}
+                                <div class="avatar-circle" style="background:#2ecc71;">{{ student.name|first|upper }}</div>
+                            {% elif forloop.counter == 3 %}
+                                <div class="avatar-circle" style="background:#e74c3c;">{{ student.name|first|upper }}</div>
+                            {% elif forloop.counter == 4 %}
+                                <div class="avatar-circle" style="background:#f39c12;">{{ student.name|first|upper }}</div>
+                            {% elif forloop.counter == 5 %}
+                                <div class="avatar-circle" style="background:#9b59b6;">{{ student.name|first|upper }}</div>
+                            {% else %}
+                                <div class="avatar-circle" style="background:#1abc9c;">{{ student.name|first|upper }}</div>
+                            {% endif %}
+                        {% endif %}
+                        <div>
+                            <div style="font-weight:500; font-size:14px;">{{ student.name }}</div>
+                            <div style="font-size:12px; color:#6c757d;">{{ student.phone|default:"No phone" }}</div>
+                        </div>
+                    </div>
+                </td>
+                <td><span class="badge bg-light text-dark">{{ student.student_id }}</span></td>
+                <td style="font-size:13px;">{{ student.email }}</td>
+                <td>
+                    {% if student.gender == 'M' %}
+                        <span class="gender-badge" style="background:#e3f2fd; color:#1565c0;">Male</span>
+                    {% elif student.gender == 'F' %}
+                        <span class="gender-badge" style="background:#fce4ec; color:#880e4f;">Female</span>
+                    {% else %}
+                        <span class="gender-badge" style="background:#f3e5f5; color:#4a148c;">Other</span>
+                    {% endif %}
+                </td>
+                <td style="font-size:13px;">{{ student.enrolled_data|date:"M d, Y" }}</td>
+                <td class="text-center">
+                    <a href="{% url 'student_detail' student.id %}" class="btn btn-sm btn-info text-white me-1">
+                        <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="{% url 'student_edit' student.id %}" class="btn btn-sm btn-warning">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+<div class="empty-state">
+    <i class="bi bi-inbox"></i>
+    <h5>No students yet</h5>
+    <p style="font-size:14px;">Start by adding your first student!</p>
+    <a href="{% url 'student_add' %}" class="btn btn-primary mt-2">
+        <i class="bi bi-person-plus"></i> Add First Student
+    </a>
+</div>
+{% endif %}
+
+{% endblock %}

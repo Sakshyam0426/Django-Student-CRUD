@@ -1,0 +1,75 @@
+# Creating the Django Project
+
+First, create the Django project structure by using the command:
+_django-admin startproject my_project ._
+
+Then, to create an app in the project, use:
+_python manage.py startapp core_
+
+# Initializing the project with migrations
+
+After creating the project, the first migrations need to be performed in order to launch the server.
+**Use these commands in succession:**
+
+_python manage.py makemigrations_
+_python manage.py migrate_
+
+After the migrations are done, you will see a 'db.sqlite3' file in project's root directory. This means the server is ready for launch.
+
+**Launch the development server with:**
+_python manage.py runserver_
+
+**Visit [localhost:8000 or 127.0.0.1:8000] to access the django launch page.**
+
+asgiref==3.11.1
+Django==6.0.5
+sqlparse==0.5.5
+
+step1- open terminal on the necessary folder
+step2- make viirtual environment by typing " virtualenv <name_you_want> "
+step3- activate the environmant by typing " source <name_of_environment>/bin/activate 
+step3- install any resoureces you want and use it
+step4- copy the info of requirements into a file by typing " pip3 freeze > requirements.txt "
+step5- deactivate the virtual environment by typing " deactivate "
+
+
+# To copy resourses of one environment to another environment
+
+step1- activate the new environment 
+step2- type " pip3 install -r requirements.txt " 
+
+# to start project:- type this in terminal
+    django-admin startproject myproject . 
+# to make apps: type this in terminal inside main folder
+    python manage.py startapp name_of_folder
+# after making app folder:
+    go to settings.py in myproject
+    go to installed apps
+    add your apps folder_name
+# every time we make changes on the module file we type this in terminal
+    python manage.py makemigrations
+    pytohn manage.py migrate
+
+# to make an admin run this in terminal
+    python manage.py createsuperuser
+    input admin creds
+# go to admin.py
+from .models import Student
+admin.site.register(Student)
+    # then run this in terminal
+python manage.py runserver
+click the link 
+go to url and add admin to url
+give username and password
+
+# add admin in admin block
+# goto views.py
+# make urls.py in app_folder and make path
+# connect urls of app_folder in myproject urls.py
+
+# make a folder template inside main folder 
+    # make a subfolder named as our app
+        make a html file inside it
+
+# goto settings.py and goto templates
+    "DIRS": [BASE_DIR/'templates'], add this in "DIRS": 

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Card - {{ student.name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background: #f0f0f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .card-wrap { width: 400px; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
+        .card-header-bg { background: linear-gradient(135deg, #2c3e50, #3498db); padding: 30px; text-align: center; }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; background: #fff; color: #2c3e50; font-size: 32px; font-weight: bold; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; }
+        .card-body-inner { padding: 24px; }
+        .info-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+        .info-row:last-child { border-bottom: none; }
+        .info-icon { color: #3498db; font-size: 18px; width: 24px; }
+        .info-label { font-size: 12px; color: #999; }
+        .info-value { font-size: 14px; font-weight: 500; color: #2c3e50; }
+        @media print {
+            body { background: #fff; }
+            .no-print { display: none; }
+            .card-wrap { box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="card-wrap">
+            <div class="card-header-bg">
+                <div class="avatar">{{ student.name|first|upper }}</div>
+                <h4 class="text-white fw-bold mb-1">{{ student.name }}</h4>
+                <span class="badge bg-light text-dark">{{ student.student_id }}</span>
+            </div>
+            <div class="card-body-inner">
+                <div class="info-row">
+                    <i class="bi bi-envelope info-icon"></i>
+                    <div>
+                        <div class="info-label">Email</div>
+                        <div class="info-value">{{ student.email }}</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <i class="bi bi-telephone info-icon"></i>
+                    <div>
+                        <div class="info-label">Phone</div>
+                        <div class="info-value">{{ student.phone|default:"Not provided" }}</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <i class="bi bi-geo-alt info-icon"></i>
+                    <div>
+                        <div class="info-label">Address</div>
+                        <div class="info-value">{{ student.address|default:"Not provided" }}</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <i class="bi bi-calendar info-icon"></i>
+                    <div>
+                        <div class="info-label">Date of Birth</div>
+                        <div class="info-value">{{ student.date_of_birth|default:"Not provided" }}</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <i class="bi bi-clock info-icon"></i>
+                    <div>
+                        <div class="info-label">Enrolled Date</div>
+                        <div class="info-value">{{ student.enrolled_data|date:"M d, Y" }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Print & Back Buttons -->
+        <div class="d-flex gap-2 mt-3 no-print justify-content-center">
+            <button onclick="window.print()" class="btn btn-primary">
+                <i class="bi bi-printer"></i> Print Card
+            </button>
+            <a href="{% url 'student_detail' student.id %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Go Back
+            </a>
+        </div>
+    </div>
+</body>
+</html>

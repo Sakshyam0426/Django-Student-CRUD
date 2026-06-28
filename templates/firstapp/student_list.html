@@ -1,0 +1,198 @@
+{% extends 'firstapp/base.html' %}
+
+{% block title %}Student List{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-dark">
+        <i class="bi bi-people-fill text-primary"></i> All Students
+    </h2>
+    <div class="d-flex gap-2">
+        <a href="{% url 'export_csv' %}" class="btn btn-success">
+            <i class="bi bi-file-earmark-excel"></i> Export CSV
+        </a>
+        <a href="{% url 'student_add' %}" class="btn btn-primary">
+            <i class="bi bi-person-plus"></i> Add Student
+        </a>
+    </div>
+</div>
+
+<!-- Search Bar -->
+<form method="GET" class="mb-4">
+    <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <input type="text" name="q" class="form-control"
+               placeholder="Search by name, student ID or email..."
+               value="{{ query }}">
+        <button type="submit" class="btn btn-primary">Search</button>
+        {% if query %}
+        <a href="{% url 'student_list' %}" class="btn btn-secondary">
+            <i class="bi bi-x"></i> Clear
+        </a>
+        {% endif %}
+    </div>
+</form>
+
+{% if query %}
+<p class="text-muted mb-3">
+    Search results for <strong>"{{ query }}"</strong> — {{ students.count }} found
+</p>
+{% endif %}
+
+{% if students %}
+<div class="table-responsive">
+    <table class="table table-hover table-bordered align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+
+                <!-- Sortable Name -->
+                <th>
+                    <a href="?sort=name&order={% if sort == 'name' and order == 'asc' %}desc{% else %}asc{% endif %}{% if query %}&q={{ query }}{% endif %}"
+                       class="text-white text-decoration-none">
+                        Name
+                        {% if sort == 'name' %}
+                            <i class="bi bi-arrow-{% if order == 'asc' %}up{% else %}down{% endif %}"></i>
+                        {% endif %}
+                    </a>
+                </th>
+
+                <!-- Sortable Student ID -->
+                <th>
+                    <a href="?sort=student_id&order={% if sort == 'student_id' and order == 'asc' %}desc{% else %}asc{% endif %}{% if query %}&q={{ query }}{% endif %}"
+                       class="text-white text-decoration-none">
+                        Student ID
+                        {% if sort == 'student_id' %}
+                            <i class="bi bi-arrow-{% if order == 'asc' %}up{% else %}down{% endif %}"></i>
+                        {% endif %}
+                    </a>
+                </th>
+
+                <!-- Sortable Email -->
+                <th>
+                    <a href="?sort=email&order={% if sort == 'email' and order == 'asc' %}desc{% else %}asc{% endif %}{% if query %}&q={{ query }}{% endif %}"
+                       class="text-white text-decoration-none">
+                        Email
+                        {% if sort == 'email' %}
+                            <i class="bi bi-arrow-{% if order == 'asc' %}up{% else %}down{% endif %}"></i>
+                        {% endif %}
+                    </a>
+                </th>
+
+                <th>Phone</th>
+
+                <!-- Sortable Enrolled -->
+                <th>
+                    <a href="?sort=enrolled_data&order={% if sort == 'enrolled_data' and order == 'asc' %}desc{% else %}asc{% endif %}{% if query %}&q={{ query }}{% endif %}"
+                       class="text-white text-decoration-none">
+                        Enrolled
+                        {% if sort == 'enrolled_data' %}
+                            <i class="bi bi-arrow-{% if order == 'asc' %}up{% else %}down{% endif %}"></i>
+                        {% endif %}
+                    </a>
+                </th>
+
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                    <div class="d-flex align-items-center gap-2">
+                        {% if student.photo %}
+                            <img src="{{ student.photo.url }}"
+                                 style="width:35px; height:35px; border-radius:50%; object-fit:cover; flex-shrink:0;">
+                        {% else %}
+                            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center text-white"
+                                 style="width:35px; height:35px; font-size:14px; flex-shrink:0;">
+                                {{ student.name|first|upper }}
+                            </div>
+                        {% endif %}
+                        {{ student.name }}
+                    </div>
+                </td>
+                <td>{{ student.student_id }}</td>
+                <td>{{ student.email }}</td>
+                <td>{{ student.phone|default:"—" }}</td>
+                <td>{{ student.enrolled_data|date:"M d, Y" }}</td>
+                <td class="text-center">
+                    <a href="{% url 'student_detail' student.id %}" class="btn btn-sm btn-info text-white me-1">
+                        <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="{% url 'student_edit' student.id %}" class="btn btn-sm btn-warning me-1">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{% url 'student_delete' student.id %}" class="btn btn-sm btn-danger">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+<div class="text-center py-5">
+    <i class="bi bi-inbox" style="font-size:50px; color:#bdc3c7;"></i>
+    <h5 class="mt-3 text-muted">
+        {% if query %}No students found for "{{ query }}"{% else %}No students yet{% endif %}
+    </h5>
+    <a href="{% url 'student_list' %}" class="btn btn-secondary mt-2">
+        <i class="bi bi-arrow-left"></i> Show All
+    </a>
+</div>
+{% endif %}
+
+<!-- Pagination -->
+{% if page_obj.paginator.num_pages > 1 %}
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page=1{% if query %}&q={{ query }}{% endif %}{% if sort %}&sort={{ sort }}&order={{ order }}{% endif %}">
+                <i class="bi bi-chevron-double-left"></i>
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if sort %}&sort={{ sort }}&order={{ order }}{% endif %}">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+        </li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if sort %}&sort={{ sort }}&order={{ order }}{% endif %}">
+                {{ num }}
+            </a>
+        </li>
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if sort %}&sort={{ sort }}&order={{ order }}{% endif %}">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+        </li>
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}{% if sort %}&sort={{ sort }}&order={{ order }}{% endif %}">
+                <i class="bi bi-chevron-double-right"></i>
+            </a>
+        </li>
+        {% endif %}
+
+    </ul>
+    <p class="text-center text-muted small">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        — {{ page_obj.paginator.count }} total students
+    </p>
+</nav>
+{% endif %}
+
+{% endblock %}
