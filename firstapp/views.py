@@ -91,11 +91,17 @@ def dashboard(request):
 
 # ─── STUDENT LIST + SEARCH + PAGINATION + SORT ───────────
 
+ALLOWED_SORT_FIELDS = ['name', 'student_id', 'email', 'enrolled_data']
+
 @login_required(login_url='login')
 def student_list(request):
     query = request.GET.get('q', '')
     sort = request.GET.get('sort', 'name')
     order = request.GET.get('order', 'asc')
+
+
+    if sort not in ALLOWED_SORT_FIELDS:       
+        sort = 'name'
 
     if query:
         students = Student.objects.filter(
