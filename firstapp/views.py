@@ -80,12 +80,14 @@ def dashboard(request):
     recent_students = Student.objects.order_by('-enrolled_data')[:5]
     male_count = Student.objects.filter(gender='M').count()
     female_count = Student.objects.filter(gender='F').count()
+    other_count = Student.objects.filter(gender='O').count()
 
     context = {
         'total_students': total_students,
         'recent_students': recent_students,
         'male_count': male_count,
         'female_count': female_count,
+        'other_count': other_count,
     }
     return render(request, 'firstapp/dashboard.html', context)
 
@@ -135,6 +137,9 @@ def student_list(request):
 
 @login_required(login_url='login')
 def student_add(request):
+    if not request.user.is_staff:
+        messages.error(request, "You don't have permission to add students.")
+        return redirect('student_list')
     form = StudentForm(request.POST or None, request.FILES or None)
     if form.is_valid():
         form.save()
@@ -153,6 +158,9 @@ def student_detail(request, id):
 
 @login_required(login_url='login')
 def student_edit(request, id):
+    if not request.user.is_staff:
+        messages.error(request, "You don't have permission to edit students.")
+        return redirect('student_list')
     student = get_object_or_404(Student, id=id)
     form = StudentForm(request.POST or None, request.FILES or None, instance=student)
     if form.is_valid():
@@ -165,9 +173,11 @@ def student_edit(request, id):
     })
 
 # ─── DELETE STUDENT ───────────────────────────────────────
-
 @login_required(login_url='login')
 def student_delete(request, id):
+    if not request.user.is_staff:
+        messages.error(request, "You don't have permission to delete students.")
+        return redirect('student_list')
     student = get_object_or_404(Student, id=id)
     if request.method == 'POST':
         name = student.name
@@ -177,6 +187,23 @@ def student_delete(request, id):
     return render(request, 'firstapp/student_confirm_delete.html', {
         'student': student
     })
+# ─── BULK DELETE ──────────────────────────────────────────
+
+@login_required(login_url='login')
+def bulk_delete(request):
+    if not request.user.is_staff:
+        messages.error(request, "You don't have permission to delete students.")
+        return redirect('student_list')
+
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('selected_students')
+        if selected_ids:
+            count = Student.objects.filter(id__in=selected_ids).count()
+            Student.objects.filter(id__in=selected_ids).delete()
+            messages.success(request, f'{count} student(s) deleted successfully!')
+        else:
+            messages.warning(request, 'No students were selected.')
+    return redirect('student_list')
 
 # ─── EXPORT CSV ───────────────────────────────────────────
 

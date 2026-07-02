@@ -1,4 +1,4 @@
-{% extends 'firstapp/base.html' %}
+{% extends 'firstapp/Base.html' %}
 
 {% block title %}Dashboard{% endblock %}
 
@@ -220,6 +220,18 @@
     </div>
 </div>
 
+<!-- Gender Distribution Chart -->
+<div class="section-title">
+    <i class="bi bi-pie-chart-fill text-primary"></i> Gender Distribution
+</div>
+<div class="row g-3 mb-4 justify-content-center">
+    <div class="col-md-6">
+        <div class="p-4 bg-white rounded-3 shadow-sm" style="max-width: 400px; margin: 0 auto;">
+            <canvas id="genderChart"></canvas>
+        </div>
+    </div>
+</div>
+
 <!-- Quick Actions -->
 <div class="section-title">
     <i class="bi bi-lightning-fill text-warning"></i> Quick Actions
@@ -321,9 +333,11 @@
                     <a href="{% url 'student_detail' student.id %}" class="btn btn-sm btn-info text-white me-1">
                         <i class="bi bi-eye"></i>
                     </a>
+                    {% if request.user.is_staff %}
                     <a href="{% url 'student_edit' student.id %}" class="btn btn-sm btn-warning">
                         <i class="bi bi-pencil"></i>
                     </a>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
@@ -342,4 +356,31 @@
 </div>
 {% endif %}
 
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    const ctx = document.getElementById('genderChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Male', 'Female', 'Other'],
+            datasets: [{
+                data: [{{ male_count }}, {{ female_count }}, {{ other_count }}],
+                backgroundColor: ['#1a73e8', '#e91e8c', '#9b59b6'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { padding: 15, font: { size: 13 } }
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}

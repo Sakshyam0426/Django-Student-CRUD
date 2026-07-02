@@ -167,12 +167,15 @@
                             <i class="bi bi-people"></i> Students
                         </a>
                     </li>
+
+                    {% if request.user.is_staff %}
                     <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name == 'student_add' %}active{% endif %}"
                            href="{% url 'student_add' %}">
                             <i class="bi bi-person-plus"></i> Add Student
                         </a>
                     </li>
+                    {% endif %}
 
                     <!-- Divider -->
                     <li class="nav-item">
