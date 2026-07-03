@@ -1,3 +1,7 @@
+from django.core.mail import send_mail
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from .serializers import StudentSerializer
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
@@ -5,8 +9,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.http import HttpResponse
-from .models import Student
+from .models import Student, ActivityLog
 from .forms import StudentForm
+from rest_framework.permissions import IsAuthenticated
 import csv
 
 # ─── AUTH VIEWS ───────────────────────────────────────────
@@ -47,6 +52,15 @@ def register_view(request):
         else:
             user = User.objects.create_user(username=username, email=email, password=password1)
             user.save()
+
+            send_mail(
+                subject='Welcome to Student Management System',
+                message=f'Hi {username},\n\nYour account has been created successfully. You can now log in and get started.\n\nThanks!',
+                from_email=None,
+                recipient_list=[email],
+                fail_silently=True,
+            )
+
             messages.success(request, 'Account created! Please login.')
             return redirect('login')
     return render(request, 'firstapp/register.html')
@@ -101,8 +115,7 @@ def student_list(request):
     sort = request.GET.get('sort', 'name')
     order = request.GET.get('order', 'asc')
 
-
-    if sort not in ALLOWED_SORT_FIELDS:       
+    if sort not in ALLOWED_SORT_FIELDS:
         sort = 'name'
 
     if query:
@@ -142,7 +155,13 @@ def student_add(request):
         return redirect('student_list')
     form = StudentForm(request.POST or None, request.FILES or None)
     if form.is_valid():
-        form.save()
+        student = form.save()
+        ActivityLog.objects.create(
+            user=request.user,
+            action='ADD',
+            student_name=student.name,
+            details=f'Student ID: {student.student_id}'
+        )
         messages.success(request, 'Student added successfully!')
         return redirect('student_list')
     return render(request, 'firstapp/student_add.html', {'form': form})
@@ -165,6 +184,12 @@ def student_edit(request, id):
     form = StudentForm(request.POST or None, request.FILES or None, instance=student)
     if form.is_valid():
         form.save()
+        ActivityLog.objects.create(
+            user=request.user,
+            action='EDIT',
+            student_name=student.name,
+            details=f'Student ID: {student.student_id}'
+        )
         messages.success(request, f'{student.name} updated successfully!')
         return redirect('student_list')
     return render(request, 'firstapp/student_edit.html', {
@@ -173,6 +198,7 @@ def student_edit(request, id):
     })
 
 # ─── DELETE STUDENT ───────────────────────────────────────
+
 @login_required(login_url='login')
 def student_delete(request, id):
     if not request.user.is_staff:
@@ -181,12 +207,20 @@ def student_delete(request, id):
     student = get_object_or_404(Student, id=id)
     if request.method == 'POST':
         name = student.name
+        student_id_num = student.student_id
         student.delete()
+        ActivityLog.objects.create(
+            user=request.user,
+            action='DELETE',
+            student_name=name,
+            details=f'Student ID: {student_id_num}'
+        )
         messages.success(request, f'{name} deleted successfully!')
         return redirect('student_list')
     return render(request, 'firstapp/student_confirm_delete.html', {
         'student': student
     })
+
 # ─── BULK DELETE ──────────────────────────────────────────
 
 @login_required(login_url='login')
@@ -198,8 +232,16 @@ def bulk_delete(request):
     if request.method == 'POST':
         selected_ids = request.POST.getlist('selected_students')
         if selected_ids:
-            count = Student.objects.filter(id__in=selected_ids).count()
-            Student.objects.filter(id__in=selected_ids).delete()
+            students_to_delete = Student.objects.filter(id__in=selected_ids)
+            count = students_to_delete.count()
+            for student in students_to_delete:
+                ActivityLog.objects.create(
+                    user=request.user,
+                    action='DELETE',
+                    student_name=student.name,
+                    details=f'Student ID: {student.student_id} (bulk delete)'
+                )
+            students_to_delete.delete()
             messages.success(request, f'{count} student(s) deleted successfully!')
         else:
             messages.warning(request, 'No students were selected.')
@@ -235,3 +277,20 @@ def export_csv(request):
 def student_card(request, id):
     student = get_object_or_404(Student, id=id)
     return render(request, 'firstapp/student_card.html', {'student': student})
+
+
+# ─── API ENDPOINTS ─────────────────────────────────────────
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def api_student_list(request):
+    students = Student.objects.all()
+    serializer = StudentSerializer(students, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def api_student_detail(request, id):
+    student = get_object_or_404(Student, id=id)
+    serializer = StudentSerializer(student)
+    return Response(serializer.data)

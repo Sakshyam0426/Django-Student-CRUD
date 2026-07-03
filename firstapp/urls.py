@@ -15,4 +15,6 @@ urlpatterns = [
     path('card/<int:id>/', views.student_card, name='student_card'),
     path('register/', views.register_view, name='register'),
     path('change-password/', views.change_password, name='change_password'),
+    path('api/students/', views.api_student_list, name='api_student_list'),
+    path('api/students/<int:id>/', views.api_student_detail, name='api_student_detail'),
 ]

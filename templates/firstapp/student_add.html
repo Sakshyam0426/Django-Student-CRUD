@@ -1,4 +1,4 @@
-{% extends 'firstapp/base.html' %}
+{% extends 'firstapp/Base.html' %}
 
 {% block title %}Add Student{% endblock %}
 
@@ -10,6 +10,14 @@
     <p class="text-muted">Fill in the details below to add a new student.</p>
 </div>
 
+{% if form.non_field_errors %}
+<div class="alert alert-danger">
+    {% for error in form.non_field_errors %}
+        {{ error }}
+    {% endfor %}
+</div>
+{% endif %}
+
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="row g-3">
@@ -20,6 +28,11 @@
                 <span class="input-group-text"><i class="bi bi-person"></i></span>
                 {{ form.name }}
             </div>
+            {% if form.name.errors %}
+            <div class="text-danger small mt-1">
+                {% for error in form.name.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
         </div>
 
         <div class="col-md-6">
@@ -28,6 +41,11 @@
                 <span class="input-group-text"><i class="bi bi-card-text"></i></span>
                 {{ form.student_id }}
             </div>
+            {% if form.student_id.errors %}
+            <div class="text-danger small mt-1">
+                {% for error in form.student_id.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
         </div>
 
         <div class="col-md-6">
@@ -36,6 +54,11 @@
                 <span class="input-group-text"><i class="bi bi-envelope"></i></span>
                 {{ form.email }}
             </div>
+            {% if form.email.errors %}
+            <div class="text-danger small mt-1">
+                {% for error in form.email.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
         </div>
 
         <div class="col-md-6">
@@ -44,6 +67,11 @@
                 <span class="input-group-text"><i class="bi bi-telephone"></i></span>
                 {{ form.phone }}
             </div>
+            {% if form.phone.errors %}
+            <div class="text-danger small mt-1">
+                {% for error in form.phone.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
         </div>
 
         <div class="col-md-6">
@@ -52,11 +80,21 @@
                 <span class="input-group-text"><i class="bi bi-calendar"></i></span>
                 {{ form.date_of_birth }}
             </div>
+            {% if form.date_of_birth.errors %}
+            <div class="text-danger small mt-1">
+                {% for error in form.date_of_birth.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
         </div>
 
         <div class="col-md-6">
             <label class="form-label">Gender</label>
             {{ form.gender }}
+            {% if form.gender.errors %}
+            <div class="text-danger small mt-1">
+                {% for error in form.gender.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
         </div>
 
         <div class="col-12">
@@ -65,6 +103,11 @@
                 <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
                 {{ form.address }}
             </div>
+            {% if form.address.errors %}
+            <div class="text-danger small mt-1">
+                {% for error in form.address.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
         </div>
 
         <!-- Photo field — inside the row, before submit -->
@@ -75,6 +118,11 @@
                 {{ form.photo }}
             </div>
             <small class="text-muted">Optional. JPG, PNG accepted.</small>
+            {% if form.photo.errors %}
+            <div class="text-danger small mt-1">
+                {% for error in form.photo.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
         </div>
 
     </div>
