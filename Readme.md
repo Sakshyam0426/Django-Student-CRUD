@@ -1,95 +1,93 @@
+<div align="center">
+
 # 🎓 Django Student CRUD System
 
-A full-featured Student Management System built with Django and Bootstrap 5.
+A full-featured Student Management System built with **Django** and **Bootstrap 5**.
+
+![Python](https://img.shields.io/badge/Python-3.14-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Django](https://img.shields.io/badge/Django-6.0-092E20?style=for-the-badge&logo=django&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+
+</div>
+
+---
 
 ## 📋 Features
 
 - ✅ Dashboard with student statistics
 - ✅ Add, View, Edit, Delete students (CRUD)
-- ✅ Search students by name, ID or email
+- ✅ Search students by name, ID, or email
 - ✅ Pagination (5 students per page)
 - ✅ Export student list to CSV
 - ✅ Print student ID card
 - ✅ User Login / Register / Logout
 - ✅ Forgot Password / Reset Password
 
+---
+
 ## 🛠️ Tech Stack
 
-- **Backend** — Python 3.14, Django 6.0
-- **Frontend** — Bootstrap 5, Bootstrap Icons
-- **Database** — SQLite3
-- **Language** — Python
+| Layer | Technology |
+|---|---|
+| **Backend** | Python 3.14, Django 6.0 |
+| **Frontend** | Bootstrap 5, Bootstrap Icons |
+| **Database** | SQLite3 |
+| **Language** | Python |
+
+---
 
 ## 📁 Project Structure
+
+```
 Django-Student-CRUD/
-
 │
-
-├── firstapp/
-
-│   ├── migrations/
-
-│   ├── templates/firstapp/
-
-│   │   ├── base.html
-
-│   │   ├── dashboard.html
-
-│   │   ├── login.html
-
-│   │   ├── register.html
-
-│   │   ├── student_list.html
-
-│   │   ├── student_add.html
-
-│   │   ├── student_detail.html
-
-│   │   ├── student_edit.html
-
-│   │   ├── student_confirm_delete.html
-
-│   │   ├── student_card.html
-
-│   │   ├── password_reset.html
-
-│   │   ├── password_reset_done.html
-
-│   │   ├── password_reset_confirm.html
-
-│   │   └── password_reset_complete.html
-
-│   ├── admin.py
-
-│   ├── forms.py
-
-│   ├── models.py
-
-│   ├── urls.py
-
-│   └── views.py
-
-│
-
-├── myproject/
-
-│   ├── settings.py
-
-│   ├── urls.py
-
-│   └── wsgi.py
-
-│
-
 ├── env/
-
+│
+├── firstapp/
+│   ├── __pycache__/
+│   ├── migrations/
+│   ├── media/
+│   ├── templates/firstapp/
+│   │   ├── Base.html
+│   │   ├── change_password.html
+│   │   ├── dashboard.html
+│   │   ├── login.html
+│   │   ├── password_reset.html
+│   │   ├── password_reset_done.html
+│   │   ├── password_reset_confirm.html
+│   │   ├── password_reset_complete.html
+│   │   ├── register.html
+│   │   ├── student_add.html
+│   │   ├── student_card.html
+│   │   ├── student_confirm_delete.html
+│   │   ├── student_detail.html
+│   │   ├── student_edit.html
+│   │   └── student_list.html
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── forms.py
+│   ├── models.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+│
+├── myproject/
+│   ├── __pycache__/
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+│
 ├── db.sqlite3
-
 ├── manage.py
-
 ├── requirements.txt
-
 └── README.md
+```
+
+---
 
 ## ⚙️ Installation & Setup
 
@@ -132,25 +130,31 @@ python manage.py runserver
 ```
 
 ### 7. Open in browser
+```
 http://127.0.0.1:8000/
+```
+
+---
 
 ## 👤 Student Model Fields
 
 | Field | Type | Description |
-|-------|------|-------------|
-| name | CharField | Full name |
-| student_id | CharField | Unique student ID |
-| email | EmailField | Email address |
-| phone | CharField | Phone number |
-| address | TextField | Home address |
-| gender | CharField | Male / Female / Other |
-| date_of_birth | DateField | Date of birth |
-| enrolled_data | DateTimeField | Auto enrollment date |
+|---|---|---|
+| `name` | CharField | Full name |
+| `student_id` | CharField | Unique student ID |
+| `email` | EmailField | Email address |
+| `phone` | CharField | Phone number |
+| `address` | TextField | Home address |
+| `gender` | CharField | Male / Female / Other |
+| `date_of_birth` | DateField | Date of birth |
+| `enrolled_data` | DateTimeField | Auto enrollment date |
+
+---
 
 ## 📸 Pages
 
 | Page | URL |
-|------|-----|
+|---|---|
 | Dashboard | `/` |
 | Student List | `/students/` |
 | Add Student | `/add/` |
@@ -163,16 +167,21 @@ http://127.0.0.1:8000/
 | Register | `/register/` |
 | Forgot Password | `/password-reset/` |
 
+---
+
 ## 📦 Requirements
+
+```
 Django>=6.0
+```
+
+To auto-generate `requirements.txt` with all installed packages:
+```bash
+pip freeze > requirements.txt
+```
+
+---
 
 ## 🙏 Credits
 
-Built with Django & Bootstrap 5
-
-Also update your requirements.txt file with this:
-Django>=6.0
-To auto-generate requirements.txt with all packages, run:
-powershellpip freeze > requirements.txt
-This will add all installed packages automatically!
-Sonnet 4.6 LowC
+Built with **Django** & **Bootstrap 5** by [Sakshyam Paudel](https://github.com/Sakshyam0426)
